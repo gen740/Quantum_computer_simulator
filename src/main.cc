@@ -1,8 +1,8 @@
 #include <iostream>
+#include <linalg/Matrix.h>
 
+using Linalg::Matrix;
 
-int main(int argc, char *argv[])
-{
-  std::cout << "Hello, World" << std::endl;
-  return 0;
-}
+auto a = Matrix<double _Complex>({{1, 2, 3}, {4, 5, 6}, {7, 8, 10}});
+
+int main() { std::cout << a << std::endl; }
