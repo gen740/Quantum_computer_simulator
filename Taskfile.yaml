@@ -13,5 +13,5 @@ tasks:
     silent: true
   execute:
     cmds:
-      - ./build/quantum_simulator
+      - ./build/three_bit_adder
     silent: true

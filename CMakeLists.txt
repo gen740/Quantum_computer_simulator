@@ -1,31 +1,32 @@
 cmake_minimum_required(VERSION 3.20)
 
-
-
 add_subdirectory(./lib/Physics)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS on)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS)
 project(quantum_simulator)
 
-file(GLOB MAIN_SOURCES ./src/main.cc)
+set(QC_EXCUTABLE three_bit_adder n_qbit_adder)
 
-add_executable(quantum_simulator ${MAIN_SOURCES})
+foreach(M ${QC_EXCUTABLE})
+    add_executable(${M} src/${M}.cc)
 
-target_compile_options(
-    quantum_simulator
-    PRIVATE
-    -std=c++20
-)
-
-target_link_libraries(
-    quantum_simulator
-    physics
-)
-
-target_include_directories(
-    quantum_simulator
-    PUBLIC
-    ${CMAKE_CURREST_LIST_DIR}/include
+    target_compile_options(
+        ${M}
+        PRIVATE
+        -std=c++20
     )
+
+    target_include_directories(
+        ${M}
+        PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/include
+    )
+
+    target_link_libraries(
+        ${M}
+        physics
+    )
+
+endforeach()
 

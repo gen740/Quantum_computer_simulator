@@ -1,32 +1,16 @@
 #include <QuantumCircuit/QuantumCircuit.h>
-#include <any>
-#include <bit>
+#include <cassert>
 #include <complex>
 #include <exception>
+#include <format>
 #include <iostream>
 #include <linalg/Matrix.h>
 
-using Linalg::Matrix;
-using Linalg::ZMatrix;
+#include "utils.h"
+
 using QuantumCircuit::measure;
 using QuantumCircuit::QCircuit;
-
-template <size_t NUM_BIT> ZMatrix num_to_mat(uint bit) {
-  if (bit > (0b1 << NUM_BIT)) {
-    throw std::runtime_error("bit exceed NUM_BIT");
-  }
-  ZMatrix ret(1, NUM_BIT);
-  for (int i = 1; i <= NUM_BIT; i++) {
-    ret(1, i) =
-        static_cast<std::complex<double>>(static_cast<bool>(bit & (0b1 << i)));
-  }
-}
-
-template <size_t NUM_BIT> void print_bitrepr(uint32_t n) {
-  for (int i = NUM_BIT - 1; i >= 0; i--) {
-    std::cout << static_cast<int>(static_cast<bool>(n & (0b1 << i)));
-  }
-}
+using Utils::bit_repr;
 
 uint32_t triadder_encode(uint32_t x, uint32_t y) {
   uint32_t ret{0};
@@ -56,8 +40,10 @@ uint32_t triadder_decode(uint32_t x) {
 
 int main() {
   Linalg::DMatrix::set_precision(1);
-  QCircuit<10> q;
+  // 10 量子ビットで量子回路を作る
+  QCircuit q{10};
 
+  // 一ビット加算機とその反対処理を記述する
   auto C = [&q](int offset) {
     q.ccx(offset + 1, offset + 2, offset + 3);
     q.cx(offset + 1, offset + 2);
@@ -68,6 +54,7 @@ int main() {
     q.cx(offset + 1, offset + 2);
     q.ccx(offset + 1, offset + 2, offset + 3);
   };
+
   C(0);
   C(3);
   C(6);
@@ -78,21 +65,24 @@ int main() {
   q.cx(1, 2);
   q.cx(4, 5);
 
+  // 上に指定した回路をここで初めて行列計算をする。
+  // N 量子ビットに対し O(N^3) の計算オーダー
   q.compile();
 
+  // 一度、行列計算をしているので、評価は compile よりも圧倒的に早い
+  // N 量子ビットに対し O(N^2) の計算オーダー
   for (int i = 0; i < 8; i++) {
-
     for (int j = 0; j < 8; j++) {
       for (auto &&k : measure(q.eval(triadder_encode(i, j)))) {
         if (k.second > 0.9) {
-          print_bitrepr<3>(i);
-          std::cout << "(" << i << ")"
-                    << " + ";
-          print_bitrepr<3>(j);
-          std::cout << "(" << j << ")"
-                    << " = ";
-          print_bitrepr<4>(triadder_decode(k.first));
-          std::cout << "(" << triadder_decode(k.first) << ")" << std::endl;
+
+          std::cout << bit_repr<3>(i) << "(" << i << ")"
+                    << " + " << bit_repr<3>(j) << "(" << j << ")"
+                    << " = " << bit_repr<4>(triadder_decode(k.first)) << "("
+                    << triadder_decode(k.first) << ")" << std::endl;
+          if (i + j != triadder_decode(k.first)) {
+            assert(false && "Invalid Value!!");
+          }
         }
       }
     }
