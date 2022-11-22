@@ -13,5 +13,5 @@ tasks:
     silent: true
   execute:
     cmds:
-      - ./build/three_bit_adder
+      - ./build/n_qbit_adder
     silent: true

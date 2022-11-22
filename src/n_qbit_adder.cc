@@ -71,29 +71,34 @@ int main() {
 
   // 上に指定した回路をここで初めて行列計算をする。
   // N 量子ビットに対し O(N^3) の計算オーダー
-  q.compile();
-  std::cout << bit_repr<8>(bit_adder_encoder<3>(0b100, 0b011)) << std::endl;
+  std::cout << q << std::endl;
+  // q.compile();
 
-  std::cout << bit_adder_decoder<5>(0b001010101010) << std::endl;
-  // // 一度、行列計算をしているので、評価は compile よりも圧倒的に早い
-  // // N 量子ビットに対し O(N^2) の計算オーダー
-  for (int i = 0; i < (0b1 << BIT_NUM); i++) {
-    for (int j = 0; j < (0b1 << BIT_NUM); j++) {
-      for (auto &&k : measure(q.eval(bit_adder_encoder<BIT_NUM>(i, j)))) {
-        if (k.second > 0.9) {
 
-          std::cout << bit_repr<BIT_NUM>(i) << "(" << i << ")"
-                    << " + " << bit_repr<BIT_NUM>(j) << "(" << j << ")"
-                    << " = "
-                    << bit_repr<BIT_NUM + 1>(
-                           bit_adder_decoder<BIT_NUM>(k.first))
-                    << "(" << bit_adder_decoder<BIT_NUM>(k.first) << ")"
-                    << std::endl;
-          // if (i + j != bit_adder_decoder<BIT_NUM>(k.first)) {
-          //   throw std::runtime_error("Invalid Value has occur");
-          // }
-        }
-      }
-    }
-  }
+
+
+  // std::cout << bit_repr<8>(bit_adder_encoder<3>(0b100, 0b011)) << std::endl;
+  //
+  // std::cout << bit_adder_decoder<5>(0b001010101010) << std::endl;
+  // // // 一度、行列計算をしているので、評価は compile よりも圧倒的に早い
+  // // // N 量子ビットに対し O(N^2) の計算オーダー
+  // for (int i = 0; i < (0b1 << BIT_NUM); i++) {
+  //   for (int j = 0; j < (0b1 << BIT_NUM); j++) {
+  //     for (auto &&k : measure(q.eval(bit_adder_encoder<BIT_NUM>(i, j)))) {
+  //       if (k.second > 0.9) {
+  //
+  //         std::cout << bit_repr<BIT_NUM>(i) << "(" << i << ")"
+  //                   << " + " << bit_repr<BIT_NUM>(j) << "(" << j << ")"
+  //                   << " = "
+  //                   << bit_repr<BIT_NUM + 1>(
+  //                          bit_adder_decoder<BIT_NUM>(k.first))
+  //                   << "(" << bit_adder_decoder<BIT_NUM>(k.first) << ")"
+  //                   << std::endl;
+  //         // if (i + j != bit_adder_decoder<BIT_NUM>(k.first)) {
+  //         //   throw std::runtime_error("Invalid Value has occur");
+  //         // }
+  //       }
+  //     }
+  //   }
+  // }
 }

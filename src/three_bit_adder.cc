@@ -4,6 +4,7 @@
 #include <exception>
 #include <format>
 #include <iostream>
+#include <limits>
 #include <linalg/Matrix.h>
 
 #include "utils.h"
@@ -65,6 +66,9 @@ int main() {
   q.cx(1, 2);
   q.cx(4, 5);
 
+  // 以下で量子回路の ascii 図を表示することができる。
+  std::cout << q << std::endl;
+
   // 上に指定した回路をここで初めて行列計算をする。
   // N 量子ビットに対し O(N^3) の計算オーダー
   q.compile();
@@ -74,8 +78,7 @@ int main() {
   for (int i = 0; i < 8; i++) {
     for (int j = 0; j < 8; j++) {
       for (auto &&k : measure(q.eval(triadder_encode(i, j)))) {
-        if (k.second > 0.9) {
-
+        if (std::abs(k.second - 1.0) < std::numeric_limits<double>::min()) {
           std::cout << bit_repr<3>(i) << "(" << i << ")"
                     << " + " << bit_repr<3>(j) << "(" << j << ")"
                     << " = " << bit_repr<4>(triadder_decode(k.first)) << "("
