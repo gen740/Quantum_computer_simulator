@@ -41,6 +41,7 @@ uint32_t triadder_decode(uint32_t x) {
 
 int main() {
   Linalg::DMatrix::set_precision(1);
+
   // 10 量子ビットで量子回路を作る
   QCircuit q{10};
 
@@ -71,6 +72,7 @@ int main() {
 
   // 上に指定した回路をここで初めて行列計算をする。
   // N 量子ビットに対し O(N^3) の計算オーダー
+  // だが、行列の swap の操作に取り替えているので O(N^2) の計算オーダー
   q.compile();
 
   // 一度、行列計算をしているので、評価は compile よりも圧倒的に早い
